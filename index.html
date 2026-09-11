@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e1116">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>داشبورد مالی شهرک ساحلی شهاب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1116;
+  --surface:#171c22;
+  --surface-raised:#20262e;
+  --border:#333b45;
+  --text:#f4f6f8;
+  --text-muted:#98a2ad;
+  --accent:#38bdf8;
+  --accent-dim:#1685b5;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --warn:#f59e0b;
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
+body{
+  -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; overflow-x:hidden;
+  font-family:'Vazirmatn',Tahoma,sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.9; font-size:16px;
+  padding:16px; max-width:1100px; margin-inline:auto;
+}
+button{-webkit-appearance:none; appearance:none;}
+header{text-align:center;padding:28px 8px 12px}
+header h1{font-size:clamp(22px,4vw,32px);font-weight:700}
+header p{color:var(--text-muted);font-size:17px;margin-top:4px}
+h2{font-size:20px;font-weight:700;margin-bottom:14px}
+section{margin:28px 0}
+.card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:16px 18px;
+}
+.kpis{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:960px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;text-align:center}
+.kpi .label{color:var(--text-muted);font-size:15px}
+.kpi .value{font-size:clamp(17px,2.4vw,21px);font-weight:700;margin-top:6px;color:var(--accent);word-break:break-word}
+.kpi .unit{font-size:14px;color:var(--text-muted)}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+#barChart{width:100%;height:auto}
+.donut-row{display:grid;gap:16px;align-items:center}
+@media(min-width:760px){.donut-row{grid-template-columns:auto 1fr}}
+#donut{width:100%;max-width:340px;margin:0 auto;display:block}
+.legend{list-style:none;font-size:16px}
+.legend li{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px dashed var(--border)}
+.legend .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.legend .amt{margin-inline-start:auto;color:var(--text-muted);font-size:14px;white-space:nowrap}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;min-width:520px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border)}
+th{background:var(--surface-raised);cursor:pointer;user-select:none;font-weight:700}
+th:hover{color:var(--accent)}
+tr:last-child td{border-bottom:none}
+tfoot td{font-weight:700;background:var(--surface-raised)}
+.acc-head{
+  width:100%;display:flex;align-items:center;gap:10px;
+  background:var(--surface-raised);border:1px solid var(--border);
+  color:var(--text);font:inherit;font-size:17px;font-weight:700;
+  padding:14px 16px;border-radius:var(--radius-md);cursor:pointer;text-align:right;
+}
+.acc-head:hover{border-color:var(--accent-dim)}
+.acc-head .total{margin-inline-start:auto;color:var(--accent);font-weight:500;font-size:15px;white-space:nowrap}
+.acc-head .arrow{transition:transform .25s;color:var(--text-muted)}
+.acc-head[aria-expanded="true"] .arrow{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.acc-inner{border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:12px}
+.items{list-style:none;font-size:15px}
+.items li{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:9px 4px;border-bottom:1px dashed var(--border)}
+.items li:last-child{border-bottom:none}
+.items .desc{flex:1;min-width:200px}
+.items .amt{font-weight:700;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+.badge .dot{width:9px;height:9px;border-radius:50%}
+.warn{
+  background:rgba(245,158,11,.12); border:1px solid var(--warn);
+  color:var(--warn); border-radius:var(--radius-sm);
+  padding:10px 14px; font-size:15px; margin-bottom:10px;
+}
+footer{text-align:center;color:var(--text-muted);padding:30px 0 18px;border-top:1px solid var(--border);margin-top:40px;font-size:15px}
+@media print{
+  body{background:#fff;color:#111;padding:0;font-size:13px}
+  .card,.kpi,.chart-card{border-color:#ccc;box-shadow:none}
+  .acc-head{background:#f2f2f2;color:#111;border-color:#ccc}
+  .acc-body{max-height:none !important}
+  .arrow{display:none}
+  .kpi .value{color:#0b5394}
+  .acc-head .total{color:#0b5394}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>داشبورد مالی شهرک ویلایی شهاب</h1>
+  <p>گزارش هزینه‌های شهرک| دی ۱۴۰۴ تا 15 ام تیر ۱۴۰۵</p>
+</header>
+<main>
+  <section>
+    <h2>نمای کلی</h2>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section>
+    <h2>هزینه ماهانه</h2>
+    <div class="chart-card"><svg id="barChart" viewBox="0 0 760 340" role="img" aria-label="نمودار ستونی هزینه ماهانه"></svg></div>
+  </section>
+
+  <section>
+    <h2>سهم دسته‌بندی‌ها</h2>
+    <div class="chart-card donut-row">
+      <svg id="donut" viewBox="0 0 200 200" role="img" aria-label="نمودار دونات دسته‌بندی"></svg>
+      <ul class="legend" id="legend"></ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>سهم هر ویلا در هر ماه</h2>
+    <div class="chart-card tbl-wrap">
+      <table id="villaTable">
+        <thead><tr><th data-key="month">ماه</th><th data-key="total">جمع کل</th><th data-key="villa">سهم هر ویلا</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>جزئیات ماهانه</h2>
+    <div id="accordion"></div>
+  </section>
+</main>
+<footer>شهرک ساحلی شهاب | گزارش مالی دی ۱۴۰۴ تا 15 ام تیر ۱۴۰۵</footer>
+
+<script>
+const MONTHS = [
+{month:"دی ۱۴۰۴",items:[
+{desc:"پرداختی بابت حقوق علی قمی",amount:15000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت حقوق خالق دیوسالار",amount:20000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت 2 روز حقوق خالق دیوسالار",amount:800000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"خرید فرغون، جارو و برگ جمع‌کن طبق فاکتور",amount:7840000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"پرداختی بابت بردن نخاله شهرک ۲ سرویس",amount:1600000,category:"خدمات و نظافت",color:"#6366f1"},
+{desc:"رنگ زدن جدول شهرک در سال ۱۴۰۳ خالق دیوسالار",amount:5000000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"پرداختی بابت قبض آب زیرزمین (چاه)",amount:4946000,category:"قبوض و اشتراک",color:"#ec4899"}]},
+{month:"بهمن ۱۴۰۴",items:[
+{desc:"پرداختی بابت حقوق علی قمی",amount:15000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت حقوق خالق دیوسالار",amount:20000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"بابت مرخصی حقوق خالق دیوسالار ۲ روز",amount:800000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت بیمه آذر ماه",amount:9693398.2,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"پرداختی بابت بیمه دی ماه",amount:9574941.6,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"بابت کارمزد پول بیمه",amount:85000,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"بابت قبض هزینه تعمیر دستگاه هرس شمشادزن",amount:5500000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"بابت بردن نخاله شهرک ۵ سرویس",amount:4000000,category:"خدمات و نظافت",color:"#6366f1"},
+{desc:"بابت برق شهرک شهاب",amount:138560,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"بابت آب شهرک شهاب (آب شهر کنتور سرایداری)",amount:482000,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"بابت قسط کنتور برق سرایداری",amount:259700,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"کود حیوانی برای شهرک ۲ سرویس",amount:7000000,category:"فضای سبز و سم‌پاشی",color:"#10b981"}]},
+{month:"اسفند ۱۴۰۴",items:[
+{desc:"پرداختی بابت حقوق خالق دیوسالار",amount:20000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت حقوق علی قمی",amount:15000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"بابت عیدی خالق دیوسالار",amount:10000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت پاداش خالق دیوسالار",amount:10000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پرداختی بابت عیدی علی قمی",amount:10390950,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"پاداش علی قمی + سنوات (هر کدام ۱۰,۳۹۰,۹۵۰ تومان)",amount:20781900,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"بابت بیمه بهمن ماه",amount:11206237.8,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"بابت بیمه اسفند ماه",amount:9349004.9,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"بابت کارمزد بیمه",amount:140000,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"بابت زنجیر برای درب ساحل",amount:380000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"بابت ریموت درب شهرک",amount:350000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"بابت سربرگ A4 برای شهرک شهاب",amount:650000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"بابت بردن نخاله ۱۴۰۴/۱۲/۲۸",amount:3200000,category:"خدمات و نظافت",color:"#6366f1"},
+{desc:"بابت تمیزکاری در ساحل با لودر",amount:6000000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"کود حیوانی ۲ نیسان",amount:7000000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"بابت قبض برق",amount:2110500,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"بابت قسط کنتور سرایدار",amount:259700,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"بابت بردن نخاله خانم سماواتی ۱ سرویس",amount:1800000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"بابت خرید پوشه و برگه A4",amount:690000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"خرید ۲ عدد لامپ برای نگهبانی و چسب",amount:530000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"مرخصی ۱۴۰۴ به مدت ۲۴ روز طلب علی قمی از شهرک",amount:15000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"کود حیوانی ۱/۵/",amount:3500000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"کود حیوانی ۱/۷/",amount:3500000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"کود حیوانی ۱/۹/",amount:3500000,category:"فضای سبز و سم‌پاشی",color:"#10b981"}]},
+{month:"فروردین ۱۴۰۵",items:[
+{desc:"پرداختی بابت حقوق علی قمی",amount:27000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"اضافه کاری علی قمی دو شیفت در نبود خالق",amount:30000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"کارگر جهت علف زدن با دستگاه",amount:7000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"کارگر جهت نظافت باغچه و علف‌زنی",amount:30000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"خرید چراغ قوه",amount:4190000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"چسب زرد برای درختان",amount:4000000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"خرید سم و چسب زرد برای درختان",amount:21540000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"بابت بردن نخاله شهرک ۳ سرویس",amount:3000000,category:"خدمات و نظافت",color:"#6366f1"},
+{desc:"تعمیر آبگرمکن",amount:450000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"خرید لامپ برای نگهبانی و سرایداری",amount:660000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"خرید شیر علم ظرفشویی سرایداری",amount:450000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"خرید پمپ نیم آب پنتاکس و ست کنترل",amount:8950000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"خرید رنگ برای سرایداری",amount:5770000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"تعمیر بخاری سرایداری",amount:300000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"شیر پیسوار و زانویی برای سرایداری",amount:1150000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"تعمیر اره موتور",amount:3550000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"روغن",amount:300000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"چسب زرد برای مرکبات",amount:2000000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"قبض معابر",amount:1170400,category:"قبوض و اشتراک",color:"#ec4899"},
+{desc:"قبض گاز",amount:638000,category:"قبوض و اشتراک",color:"#ec4899"}]},
+{month:"اردیبهشت ۱۴۰۵",items:[
+{desc:"پرداختی بابت حقوق علی قمی",amount:27000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"حقوق ذکی",amount:50000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"خرید کنه‌کش، سم و قارچ‌کش",amount:5550000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"اتصالی تابلو اصلی شهرک نگهبانی اجرت",amount:1000000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"کابل‌کشی و نصب پمپ",amount:3640000,category:"نگهداری و تعمیرات",color:"#f59e0b"}]},
+{month:"خرداد ۱۴۰۵",items:[
+{desc:"پرداختی بابت حقوق علی قمی",amount:27000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"حقوق ذکی",amount:50000000,category:"حقوق و دستمزد",color:"#38bdf8"},
+{desc:"لیست بیمه فروردین",amount:14233510.6,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"کارمزد بیمه",amount:150000,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"۳ سرویس نخاله",amount:1500000,category:"خدمات و نظافت",color:"#6366f1"},
+{desc:"لیست بیمه اردیبهشت",amount:8468785.2,category:"بیمه و امور مالی",color:"#a855f7"},
+{desc:"خرید نخ علف‌تراش",amount:2325000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"هندل علف‌تراش",amount:600000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"فولر هندل",amount:250000,category:"متفرقه و عمومی",color:"#64748b"}]},
+{month:"تیر ۱۴۰۵",items:[
+{desc:"تعمیر دستگاه سم‌پاش",amount:12270000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"خرید سم مرکبات از کرج",amount:63100000,category:"فضای سبز و سم‌پاشی",color:"#10b981"},
+{desc:"داربست و بنر رحلت امام به دستور شهرداری",amount:6400000,category:"متفرقه و عمومی",color:"#64748b"},
+{desc:"تعمیر و نصب در برای سرایداری",amount:8000000,category:"نگهداری و تعمیرات",color:"#f59e0b"},
+{desc:"تعمیر دستگاه علف‌تراش",amount:1900000,category:"فضای سبز و سم‌پاشی",color:"#10b981"}]}
+];
+
+// Auto-calculate totals from items
+MONTHS.forEach(m => { m.total = m.items.reduce((s,i) => s + i.amount, 0); });
+
+const VILLAS = 22;
+const fa = n => Math.round(n).toLocaleString("fa-IR");
+const toman = n => fa(n) + " تومان";
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const grand = MONTHS.reduce((s,m) => s + m.total, 0);
+const avgWith = grand / MONTHS.length;
+const esfTotal = MONTHS.find(m => m.month.indexOf("اسفند") > -1).total;
+const avgWithout = (grand - esfTotal) / (MONTHS.length - 1);
+
+function renderKPIs(){
+  const items = [
+    {label:"جمع کل هزینه‌ها (۷ ماه)", value:toman(grand)},
+    {label:"میانگین ماهانه", value:toman(avgWith)},
+    {label:"مجموع شارژ پرداخت شده", value:toman(5224000000)},
+    {label:"دریافتی از AV West", value:toman(300000000)}
+  ];
+  document.getElementById("kpis").innerHTML = items.map(i =>
+    '<div class="kpi"><div class="label">'+i.label+'</div><div class="value">'+i.value+'</div></div>'
+  ).join("");
+}
+
+function abbrev(n){
+  const m = n / 1e6;
+  return (Math.round(m)).toLocaleString("fa-IR") + "م";
+}
+
+function renderBar(){
+  const W=760,H=340,padT=20,padB=56,padL=64,padR=14;
+  const cw=W-padL-padR, ch=H-padT-padB;
+  const max=esfTotal*1.08;
+  const bw=cw/MONTHS.length;
+  let s="";
+  for(let i=0;i<=4;i++){
+    const y=padT+ch-(ch*i/4);
+    s+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#333b45" stroke-width="1"/>';
+    s+='<text x="'+(padL-8)+'" y="'+(y+5)+'" font-size="12" fill="#98a2ad" text-anchor="end">'+abbrev(max*i/4)+'</text>';
+  }
+  MONTHS.forEach((m,i)=>{
+    const h=(m.total/max)*ch;
+    const x=padL+i*bw+bw*0.18, w=bw*0.64, y=padT+ch-h;
+    const isEsf = m.month.indexOf("اسفند")>-1;
+    const c = isEsf ? "#ef4444" : "#38bdf8";
+    s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6" fill="'+c+'"><title>'+esc(m.month)+' — '+toman(m.total)+'</title></rect>';
+    s+='<text x="'+(x+w/2)+'" y="'+(y-8)+'" font-size="12" fill="#f4f6f8" text-anchor="middle">'+abbrev(m.total)+'</text>';
+    s+='<text x="'+(x+w/2)+'" y="'+(H-34)+'" font-size="12" fill="#98a2ad" text-anchor="middle">';
+    const parts=m.month.split(" ");
+    s+='<tspan x="'+(x+w/2)+'" dy="0">'+parts[0]+'</tspan><tspan x="'+(x+w/2)+'" dy="16">'+parts[1]+'</tspan></text>';
+  });
+  document.getElementById("barChart").innerHTML=s;
+}
+
+function renderDonut(){
+  const cat={};
+  MONTHS.forEach(m=>m.items.forEach(it=>{
+    cat[it.category]=(cat[it.category]||0)+it.amount;
+  }));
+  const entries=Object.entries(cat).sort((a,b)=>b[1]-a[1]);
+  const sum=entries.reduce((s,e)=>s+e[1],0);
+  const C=2*Math.PI*80;
+  let off=0,segs="",leg="";
+  entries.forEach(e=>{
+    const frac=e[1]/sum, len=frac*C;
+    const col=(MONTHS.flatMap(m=>m.items).find(i=>i.category===e[0])||{}).color||"#64748b";
+    segs+='<circle r="80" cx="100" cy="100" fill="none" stroke="'+col+'" stroke-width="26" '
+      +'stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" '
+      +'transform="rotate(-90 100 100)"><title>'+esc(e[0])+' — '+toman(e[1])+'</title></circle>';
+    leg+='<li><span class="dot" style="background:'+col+'"></span>'+esc(e[0])
+      +'<span class="amt">'+fa(e[1])+' ('+fa(frac*100)+'٪)</span></li>';
+    off+=len;
+  });
+  document.getElementById("donut").innerHTML=segs
+    +'<text x="100" y="95" text-anchor="middle" font-size="12" fill="#98a2ad">جمع کل</text>'
+    +'<text x="100" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#f4f6f8">'+abbrev(sum)+'</text>';
+  document.getElementById("legend").innerHTML=leg;
+}
+
+let sortKey="month", sortDir=1;
+function renderVilla(){
+  const rows=MONTHS.map(m=>({month:m.month,total:m.total,villa:m.total/VILLAS}));
+  rows.sort((a,b)=>{
+    if(sortKey==="month"){
+      const ia=MONTHS.findIndex(m=>m.month===a.month), ib=MONTHS.findIndex(m=>m.month===b.month);
+      return sortDir*(ia-ib);
+    }
+    return sortDir*(a[sortKey]-b[sortKey]);
+  });
+  const tb=document.querySelector("#villaTable tbody");
+  tb.innerHTML=rows.map(r=>'<tr><td>'+esc(r.month)+'</td><td>'+toman(r.total)+'</td><td>'+toman(r.villa)+'</td></tr>').join('')
+    +'<tfoot><tr><td>جمع</td><td>'+toman(grand)+'</td><td>'+toman(grand/VILLAS)+'</td></tr></tfoot>';
+}
+document.querySelectorAll("#villaTable th").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const k=th.dataset.key;
+    if(sortKey===k){sortDir*=-1}else{sortKey=k;sortDir=1}
+    renderVilla();
+  });
+});
+
+function renderAccordion(){
+  const wrap=document.getElementById("accordion");
+  wrap.innerHTML=MONTHS.map((m,i)=>{
+    const isEsf=m.month.indexOf("اسفند")>-1;
+    const warn=isEsf?'<div class="warn">⚠️ این ماه شامل عیدی، پاداش، سنوات است</div>':"";
+    const items=m.items.map(it=>
+      '<li><span class="desc">'+esc(it.desc)+'</span>'
+      +'<span class="badge"><span class="dot" style="background:'+it.color+'"></span>'+esc(it.category)+'</span>'
+      +'<span class="amt">'+toman(it.amount)+'</span></li>'
+    ).join("");
+    return '<div class="acc-item" style="margin-bottom:10px">'
+      +'<button class="acc-head" aria-expanded="false" data-i="'+i+'">'
+      +'<span>'+esc(m.month)+'</span>'
+      +'<span class="total">'+toman(m.total)+'</span>'
+      +'<span class="arrow">▼</span></button>'
+      +'<div class="acc-body"><div class="acc-inner">'+warn
+      +'<ul class="items">'+items+'</ul></div></div></div>';
+  }).join("");
+  wrap.querySelectorAll(".acc-head").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const body=btn.nextElementSibling;
+      const open=btn.getAttribute("aria-expanded")==="true";
+      btn.setAttribute("aria-expanded",String(!open));
+      body.style.maxHeight=open?"0":(body.scrollHeight+"px");
+    });
+  });
+}
+
+renderKPIs();
+renderBar();
+renderDonut();
+renderVilla();
+renderAccordion();
+</script>
+</body>
+</html>
